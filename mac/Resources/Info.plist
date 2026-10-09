@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key><string>EarBridge</string>
+    <key>CFBundleDisplayName</key><string>EarBridge</string>
+    <key>CFBundleIdentifier</key><string>com.hayoonjae.earbridge</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
+    <key>CFBundleExecutable</key><string>EarBridge</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>1.0.0</string>
+    <key>CFBundleVersion</key><string>1</string>
+    <key>LSMinimumSystemVersion</key><string>14.0</string>
+    <key>NSHighResolutionCapable</key><true/>
+    <key>ATSApplicationFontsPath</key><string>.</string>
+    <key>NSLocalNetworkUsageDescription</key><string>같은 와이파이에 있는 폰의 EarBridge를 찾아 소리를 받기 위해 필요합니다.</string>
+    <key>NSBonjourServices</key>
+    <array><string>_earbridge._tcp</string></array>
+</dict>
+</plist>
