@@ -15,6 +15,8 @@ final class JitterBuffer {
     var prime: Int
     var maxLag: Int
     var gain: Float = 1
+    var autoLevel = true
+    private var agc = AutoGain()
 
     init(sampleRate: Int) {
         buf = [Float](repeating: 0, count: sampleRate * 2)
@@ -48,13 +50,14 @@ final class JitterBuffer {
         let cap = buf.count
         var i = 0
         if playing {
-            let g = gain
             while i < frames && count > 0 {
-                out[i] = max(-1, min(1, buf[r] * g))
+                out[i] = buf[r]
                 r = (r + 1) % cap
                 count -= 1
                 i += 1
             }
+            let g = gain * (autoLevel ? agc.process(out, i) : 1)
+            for k in 0..<i { out[k] = tanhf(out[k] * g) } // 부드럽게 눌러서 찢어지는 소리 방지
             if count == 0 { playing = false } // 비면 다시 모을 때까지 기다림
         }
         while i < frames { out[i] = 0; i += 1 }
@@ -71,6 +74,27 @@ final class JitterBuffer {
     func reset() {
         lock.lock(); defer { lock.unlock() }
         r = 0; w = 0; count = 0; playing = false
+    }
+}
+
+/// 자동 음량: 소리 크기를 따라가다가 목표 크기(-20dB)가 되도록 배율을 천천히 맞춘다.
+/// 폰 마이크는 조용한 방에서 -50~-70dB라 그냥 틀면 거의 안 들린다.
+struct AutoGain {
+    private var env: Float = 0.01
+    private var g: Float = 1
+    let target: Float = 0.1   // -20dB
+    let maxGain: Float = 25   // +28dB 까지만 (잡음이 너무 커지지 않게)
+
+    mutating func process(_ x: UnsafeMutablePointer<Float>, _ n: Int) -> Float {
+        guard n > 0 else { return g }
+        var sum: Float = 0
+        for k in 0..<n { sum += x[k] * x[k] }
+        let rms = (sum / Float(n)).squareRoot()
+        // 커질 땐 빨리, 작아질 땐 천천히(약 2초) 따라간다
+        env = rms > env ? env * 0.5 + rms * 0.5 : env * 0.995 + rms * 0.005
+        let want = min(maxGain, max(1, target / max(env, 1e-5)))
+        g += (want - g) * (want < g ? 0.3 : 0.02) // 줄일 땐 빨리, 키울 땐 천천히
+        return g
     }
 }
 

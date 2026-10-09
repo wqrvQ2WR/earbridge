@@ -10,6 +10,15 @@
 | `mac/` | 맥 앱 (SwiftUI). 폰을 자동으로 찾아서 재생한다. 볼륨은 400%까지 |
 | `relay/` | 다른 네트워크용 중계 서버 (Node, 의존성 없음) |
 
+## 받기
+
+[Releases](https://github.com/wqrvQ2WR/earbridge/releases/latest)에서
+
+- **안드로이드**: `EarBridge-x.y.z.apk`를 폰에서 받아 설치 (출처를 알 수 없는 앱 허용 필요)
+- **맥**: `EarBridge-mac-x.y.z.zip`을 풀어서 응용 프로그램 폴더로 옮기기. 서명이 없어서 처음엔 "확인되지 않은 개발자" 경고가 뜬다. 앱을 우클릭 → 열기, 또는 `xattr -cr /Applications/EarBridge.app`
+
+맥 앱의 **자동 음량**을 켜 두면(기본값) 조용한 방 소리도 크게 들린다. 작은 소리는 최대 +28dB까지 키우고 큰 소리는 그대로 둔다.
+
 ## 연결 방식
 
 - **같은 와이파이**: 폰이 Bonjour(`_earbridge._tcp`)로 알리고 TCP 7700으로 직접 보낸다. 맥 앱이 알아서 붙는다.

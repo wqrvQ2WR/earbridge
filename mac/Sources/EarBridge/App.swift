@@ -51,6 +51,11 @@ struct ContentView: View {
                 }
                 Slider(value: $bridge.volume, in: 0...4)
                     .tint(Color(red: 0.61, green: 0.36, blue: 1))
+                Toggle(isOn: $bridge.autoLevel) {
+                    Text("자동 음량 (작은 소리 키우기)").font(pre(13))
+                }
+                .toggleStyle(.switch)
+                .tint(Color(red: 1, green: 0.30, blue: 0.62))
             }
 
             VStack(alignment: .leading, spacing: 8) {

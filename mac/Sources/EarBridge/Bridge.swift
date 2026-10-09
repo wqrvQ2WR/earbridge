@@ -41,6 +41,12 @@ final class Bridge: ObservableObject {
             UserDefaults.standard.set(volume, forKey: "volume")
         }
     }
+    @Published var autoLevel: Bool = UserDefaults.standard.object(forKey: "autoLevel") as? Bool ?? true {
+        didSet {
+            player.buffer.autoLevel = autoLevel
+            UserDefaults.standard.set(autoLevel, forKey: "autoLevel")
+        }
+    }
     @Published var code: String = UserDefaults.standard.string(forKey: "code") ?? ""
     @Published private(set) var isRemote = false
 
@@ -274,6 +280,7 @@ final class Bridge: ObservableObject {
             Task { @MainActor in
                 guard g == self.queue.sync(execute: { self.gen }) else { return }
                 jb.gain = Float(self.volume)
+                jb.autoLevel = self.autoLevel
                 if self.isRemote { jb.loosen() } // 인터넷은 흔들림이 커서 버퍼를 넉넉히
                 self.status = .listening(self.target?.label ?? "폰")
                 dlog("listening \(self.target?.label ?? "-") \(rate)Hz")
