@@ -49,7 +49,7 @@ struct ContentView: View {
                     Spacer()
                     Text("\(Int(bridge.volume * 100))%").font(pre(13, bold: true)).monospacedDigit()
                 }
-                Slider(value: $bridge.volume, in: 0...4)
+                Slider(value: $bridge.volume, in: 0...10)
                     .tint(Color(red: 0.61, green: 0.36, blue: 1))
                 Toggle(isOn: $bridge.autoLevel) {
                     Text("자동 음량 (작은 소리 키우기)").font(pre(13))
