@@ -27,6 +27,8 @@ struct EarBridgeApp: App {
     }
 }
 
+let maxVolume = 50.0
+
 struct ContentView: View {
     @EnvironmentObject var bridge: Bridge
     @State private var address = ""
@@ -49,7 +51,7 @@ struct ContentView: View {
                     Spacer()
                     Text("\(Int(bridge.volume * 100))%").font(pre(13, bold: true)).monospacedDigit()
                 }
-                Slider(value: $bridge.volume, in: 0...10)
+                Slider(value: volumeSlider, in: 0...1)
                     .tint(Color(red: 0.61, green: 0.36, blue: 1))
                 Toggle(isOn: $bridge.autoLevel) {
                     Text("자동 음량 (작은 소리 키우기)").font(pre(13))
@@ -111,6 +113,19 @@ struct ContentView: View {
         .padding(24)
         .frame(width: 380)
         .background(bg)
+    }
+
+    /// 슬라이더 앞 20%는 0~100%, 나머지는 100%~5000%를 로그로 (멀리 있는 소리용)
+    private var volumeSlider: Binding<Double> {
+        Binding(
+            get: {
+                let v = bridge.volume
+                return v <= 1 ? v * 0.2 : 0.2 + 0.8 * log(v) / log(maxVolume)
+            },
+            set: { t in
+                bridge.volume = t <= 0.2 ? t / 0.2 : pow(maxVolume, (t - 0.2) / 0.8)
+            }
+        )
     }
 
     private func isCurrent(_ p: Phone) -> Bool {
